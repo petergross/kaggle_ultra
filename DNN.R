@@ -183,32 +183,33 @@ train.dnn <- function(x, y, traindata=data, testdata=NULL,
 ########################################################################
 # testing
 #######################################################################
-set.seed(1)
+#set.seed(1)
 
 # 0. EDA
-summary(iris)
-plot(iris)
+#summary(iris)
+#plot(iris)
 
 # 1. split data into test/train
-samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
+#samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
 
-Rprof()
+#Rprof()
 
 # 2. train model
-ir.model <- train.dnn(x=1:4, y=5, traindata=iris[samp,], testdata=iris[-samp,], hidden=10, maxit=2000, display=50)
+#ir.model <- train.dnn(x=1:4, y=5, traindata=iris[samp,], testdata=iris[-samp,], hidden=10, maxit=2000, display=50)
 # ir.model <- train.dnn(x=1:4, y=5, traindata=iris[samp,], hidden=6, maxit=2000, display=50)
 
-Rprof(NULL)
-summaryRprof()
+#Rprof(NULL)
+#summaryRprof()
 
 
 # 3. prediction
 # NOTE: if the predict is factor, we need to transfer the number into class manually.
 #       To make the code clear, I don't write this change into predict.dnn function.
-labels.dnn <- predict.dnn(ir.model, iris[-samp, -5])
+
+#labels.dnn <- predict.dnn(ir.model, iris[-samp, -5])
 
 # 4. verify the results
-table(iris[-samp,5], labels.dnn)
+#table(iris[-samp,5], labels.dnn)
 #          labels.dnn
 #            1  2  3
 #setosa     25  0  0
@@ -216,7 +217,7 @@ table(iris[-samp,5], labels.dnn)
 #virginica   0  0 25
 
 #accuracy
-mean(as.integer(iris[-samp, 5]) == labels.dnn)
+#mean(as.integer(iris[-samp, 5]) == labels.dnn)
 # 0.98
 
 # # 5. compare with nnet
@@ -307,4 +308,29 @@ mean(as.integer(iris[-samp, 5]) == labels.dnn)
 #        col = c("blue","red"),
 #        lwd=c(1,1)
 # )
+
+Rprof()
+
+train_file <- "/Users/peter/Documents/Projects/Kaggle_Ultra/MNIST/train.csv"
+test_file <- "/Users/peter/Documents/Projects/Kaggle_Ultra/MNIST/test.csv"
+
+train <- read.csv(train_file, sep=",")
+test <- read.csv(test_file, sep=",")
+
+mnist.model <- train.dnn(x=1:784, y=785, traindata=train, hidden=800, maxit=200, display=1)
+
+Rprof(NULL)
+ 
+summaryRprof()
+
+# x <- test[1:784,]
+
+y <- "X8"
+x <- test[setdiff(names(test), y)]
+
+predictions <- predict.dnn(mnist.model, x)
+
+# Accuracy
+mean(predictions - 1 == test[,y])
+
 
